@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  username String @id
+  password String @db.Text
+}
+
+model Patient { 
+  id              String         @id @default(cuid())
+  fullName        String
+  birthDate       String
+  gender          Gender
+  nutritionalStatus   NutritionalStatus
+  email           String
+  mobileNumber    String
+  telephoneNumber String?
+  familyHistory   FamilyHistory?
+  medicalChart    MedicalChart?
+  Treatment       Treatment[]
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum NutritionalStatus {
+  NORMAL
+  WASTING //Low weight for height, often due to acute malnutrition.
+  STUNTING  // Low height for age, often due to chronic malnutrition.
+  UNDERWEIGHT  //Low weight for age, Acute or Chronic
+  OBESE
+}
+
+model FamilyHistory {
+  patientId                  String  @id
+  patient                    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  heartDisease               Boolean
+  geniticDisorder            Boolean
+  diabetes                   Boolean
+  allergiesAndAsthma         Boolean
+  cancerHistory              Boolean
+  siblingsConditions         Boolean
+  developmentalDisorders     Boolean
+  gastricCondition           Boolean
+  pastMedicalTreatments      String?
+}
+
+model MedicalChart {
+  patientId               String  @id
+  patient                 Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  birthComplications      String?
+  hospitalAdmissions      String?
+  immunizationRecords     String?
+  allergies               String?
+  operations              String?
+  growthDevelopmentIssues String?
+  congenitalDisorders     Boolean
+  respiratoryConditions   Boolean
+  cardiacConditions       Boolean
+  neurologicalIssues      Boolean
+  gastrointestinalIssues  Boolean
+  skinConditions          Boolean
+  headache                Boolean
+  fever                   Boolean
+  currentMedications      String?
+  breastfeeding           Boolean
+  behaviorconcerns        Boolean
+  parentConcernOfAny      String?
+}
+
+model Treatment {
+  id             String  @id @default(uuid())
+  patient        Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId      String
+  service        String
+  serviceDate    String
+  prescription   String?  @db.Text
+
+  @@index([patientId])
+}

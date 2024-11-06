@@ -1,0 +1,12 @@
+{
+"name": "db",
+"version": "0.0.0",
+"license": "MIT",
+"scripts": {
+  "db:migrate-dev": "pnpx prisma migrate init --name dev",
+  "db:db-push": "pnpx prisma db push",
+  "db:gen-client": "pnpx prisma generate",
+
+  "db-seed": "tsx libs/db/src/lib/seed.ts"
+}
+}
